@@ -22,3 +22,9 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### 问题一
+二级路由path不用带斜杠
+
+### 命令视图
+同级下展示多个视图
