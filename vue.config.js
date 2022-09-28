@@ -3,6 +3,22 @@ module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
   devServer: {
-    open: true
+    open: true,
+    host: '127.0.0.1',
+    // https:true,
+    port: 6103,
+    client: {
+      webSocketURL: 'ws://0.0.0.0:6103/ws',
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    proxy: {
+      "/api": {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        pathRewrite: { "^/api": "" }//路径重写
+      }
+    }
   }
 })
