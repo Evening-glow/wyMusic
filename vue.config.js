@@ -6,7 +6,7 @@ module.exports = defineConfig({
     open: true,
     host: '127.0.0.1',
     // https:true,
-    port: 6103,
+    port: 5000,
     client: {
       webSocketURL: 'ws://0.0.0.0:6103/ws',
     },
