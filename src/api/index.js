@@ -15,13 +15,16 @@ export const reqAlbumList = () => requests.get('/api/top/album', {
     method: 'get'
 });
 
-// /toplist 获取所有排行榜
+// /toplist 获取所有排行榜列表 之后要通过slice分为两大块
 export const reqAllList = () => requests.get('/api/toplist', { method: 'get' })
 
-// /toplist/detail 获取所有榜单内容摘要
+// /toplist/detail 获取所有榜单内容摘要 榜单信息不全只有前三个歌曲
 export const reqListDetail = () => requests.get('/api/toplist/detail', { method: 'get' })
 
 export const reqPlayListCommend = (params) => requests.get('/api/comment/playlist', { method: 'post', params })
 
 //获取歌单 /top/playlist 有参数
 export const reqPlayList = (params) => requests.get('/api/top/playlist', { method: 'post', params })
+
+//使用歌单详情接口,传入排行榜 id 获取排行榜详情数据(排行榜也是歌单的一种)
+export const reqPlayListDetail = (params) => requests.get('/api/playlist/detail', { method: 'post', params })
