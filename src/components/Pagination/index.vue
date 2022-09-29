@@ -16,7 +16,10 @@
 <script>
 export default {
     name: 'Pagination',
-    props: ['total', 'pageNo', 'pageSize', 'size'],
+    props: ['total', 'pageNo', 'size'],
+    data() {
+        return { pageSize: 7 }
+    },
     computed: {
         lastPage() {
             return Math.ceil(this.total / this.size);

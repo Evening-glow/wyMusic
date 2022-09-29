@@ -4,8 +4,8 @@
             <div class="c-list">
                 <h2>云音乐特色榜</h2>
                 <ul>
-                    <li :class="activeId===i ? 'active':''" v-for="list,i in allList[0]" :key="list.id"
-                        @click="handleChangeActive(i,list.id)">
+                    <li :class="listParams.id==list.id ? 'active':''" v-for="list,i in allList[0]" :key="list.id"
+                        @click="handleChangeActive(list.id)">
                         <div class="context">
                             <img :src="list.coverImgUrl" alt="">
                             <div>
@@ -19,8 +19,8 @@
             <div class="c-list">
                 <h2>全球媒体榜</h2>
                 <ul>
-                    <li :class="activeId2 === i ?'active':''" v-for="list,i in allList[1]" :key="list.id"
-                        @click="handleChangeActive2(i,list.id)">
+                    <li :class="listParams.id == list.id ?'active':''" v-for="list,i in allList[1]" :key="list.id"
+                        @click="handleChangeActive(list.id)">
                         <div class="context">
                             <img :src="list.coverImgUrl" alt="">
                             <div>
@@ -35,12 +35,13 @@
         <div class="details">
             <div class="d-hd">
                 <div class="d-list">
-                    <img src="./images/riseList.jpg" alt="">
+                    <img :src="listDetail.coverImgUrl" alt="">
                     <div class="mask"></div>
                 </div>
                 <div class="d-context">
-                    <h2 class="title">飙升榜</h2>
-                    <p class="d-st"><span class="icon-clock"></span>最新更新：09月24日<span class="d-time">（刚刚更新）</span></p>
+                    <h2 class="title">{{listDetail.name}}</h2>
+                    <p class="d-st"><span class="icon-clock"></span>最新更新：{{listDetail.updateTime | timer}}<span
+                            class="d-time">（刚刚更新）</span></p>
                     <div class="ctr-btns">
                         <div class="ctr-btn player">
                             <a href="#" class="icon-player">
@@ -54,25 +55,25 @@
                             </a>
                         </div>
                         <a href="#" class="ctr-btn collection">
-                            <i>(234234)</i>
+                            <i>({{listDetail.subscribedCount}})</i>
                         </a>
                         <a href="#" class="ctr-btn share">
-                            <i>(3534532)</i>
+                            <i>({{listDetail.shareCount}})</i>
                         </a>
                         <a href="#" class="ctr-btn download">
                             <i>下载</i>
                         </a>
                         <a href="#" class="ctr-btn comm">
-                            <i>讨论</i>
+                            <i>({{listDetail.commentCount}})</i>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="songList">
                 <div class="s-hd">
-                    <h3>歌曲列表<span class="s-count">100首歌</span></h3>
+                    <h3>歌曲列表<span class="s-count">{{listDetail.trackCount}}首歌</span></h3>
 
-                    <span class="f-right">播放：<i>234234939</i>次</span>
+                    <span class="f-right">播放：<i>{{listDetail.playCount}}</i>次</span>
                 </div>
                 <table class="s-tb">
                     <thead>
@@ -84,17 +85,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr v-for="song,i in songList" :key="song.id">
                             <td class="s-td-1">
-                                <span class="no">1</span>
+                                <span class="no">{{i+1}}</span>
                                 <span class="no-icon no-icon-up">1</span>
                             </td>
                             <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
+                                <a href="#" class="song" v-if="i < 3">
+                                    <img :src="song.al.picUrl" alt="歌曲封面">
                                 </a>
                                 <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
+                                <a href="#" class="songName">{{song.name}}</a>
                             </td>
                             <td class="s-td-3">
                                 <span>04:21</span>
@@ -106,257 +107,7 @@
                                 </div>
                             </td>
                             <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-down">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-up">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="s-td-1">
-                                <span class="no">1</span>
-                                <span class="no-icon no-icon-new">1</span>
-                            </td>
-                            <td class="s-td-2">
-                                <a href="#" class="song">
-                                    <img src="./images/song.jpg" alt="">
-                                </a>
-                                <span class="play-icon"></span>
-                                <a href="#" class="songName">玫瑰少年</a>
-                            </td>
-                            <td class="s-td-3">
-                                <span>04:21</span>
-                                <div class="contrl-btns">
-                                    <a href="#" class="icn icn-add"></a>
-                                    <a href="#" class="icn icn-fav"></a>
-                                    <a href="#" class="icn icn-share"></a>
-                                    <a href="#" class="icn icn-dl"></a>
-                                </div>
-                            </td>
-                            <td class="s-td-4">
-                                伦桑
+                                {{song.ar[0].name}}
                             </td>
                         </tr>
                     </tbody>
@@ -365,7 +116,7 @@
             <div class="comment">
                 <div class="c-hd">
                     <h2>评论</h2>
-                    <p>共215377条评论</p>
+                    <p>共{{listDetail.commentCount}}条评论</p>
                 </div>
                 <div class="c-send">
                     <img src="./images/default_avatar.jpg" alt="" class="avatar">
@@ -391,8 +142,8 @@
                     </div>
                 </div>
                 <div class="c-comm">
-                    <h3>最新评论（{{playComments.total}}）</h3>
-                    <div class="itm" v-for="comment,i in playComments.comments" :key="comment.commentId">
+                    <h3>最新评论（{{listComments.total}}）</h3>
+                    <div class="itm" v-for="comment,i in listComments.comments" :key="comment.commentId">
                         <a href="#" class="user-avatar"><img :src="comment.user.avatarUrl" alt=""></a>
                         <div class="ctn">
                             <div class="user-ctn">
@@ -402,7 +153,8 @@
                             <div class="timer">
                                 <div class="time">{{comment.time | timer}}</div>
                                 <div class="c-reply">
-                                    <a href="#" class="zan"><i class="icon-zan"></i>({{comment.likedCount}})</a>
+                                    <a href="#" class="zan"><i class="icon-zan"></i><em
+                                            v-if="comment.likedCount">({{comment.likedCount}})</em></a>
                                     <span>|</span>
                                     <a href="#" class="reply">回复</a>
                                 </div>
@@ -411,66 +163,78 @@
                     </div>
                 </div>
             </div>
-            <div class="pager">
-                <button class="pre btns" disabled="true">&lt;上一页</button>
-                <li class="page active">1</li>
-                <li class="page">2</li>
-                <li class="page">3</li>
-                <li class="page">4</li>
-                <li class="page">5</li>
-                <li class="page">6</li>
-                <li class="page">7</li>
-                <li class="page">8</li>
-                <li class="page more">...</li>
-                <li class="page">10770</li>
-                <button class="next btns">下一页&gt;</button>
-            </div>
+            <Pagination :total="listComments.total" size="20" :pageNo="pageNo" @changePageNo="changePageNo" />
         </div>
     </div>
 </template>
 <script>
-import { reqAllList, reqPlayListCommend } from '@/api'
+import { reqAllList, reqPlayListCommend, reqPlayListDetail } from '@/api'
 export default {
-    name: 'RankingList',
+    name: "RankingList",
     data() {
         return {
             allList: [],
-            activeId: 0,
-            activeId2: -1,
-            playListId: 19723756,
-            playComments: []
+            listParams: { id: 19723756 },
+            listComments: [],
+            listDetail: { tracks: [] },
+            listCommentParams: {
+                id: 19723756,
+                limit: 20,
+                offset: 0
+            }
+        };
+    },
+    watch: {
+        $route: {
+            //路由改变后就重新获取数据
+            async handler() {
+                Object.assign(this.listParams, this.$route.query);
+                Object.assign(this.listCommentParams, this.$route.query);
+                this.listComments = await reqPlayListCommend(this.listCommentParams);
+                let detailData = await reqPlayListDetail(this.listParams);
+                this.listDetail = detailData.playlist;
+            }
         }
     },
     computed: {
-
+        songList() {
+            // console.log(this.listDetail.tracks)
+            return this.listDetail.tracks.slice(0, 10);
+        },
+        pageNo: {
+            get() {
+                return this.listCommentParams.offset / this.listCommentParams.limit == 0 ? 1 : this.listCommentParams.offset / this.listCommentParams.limit + 1;
+            }
+        }
     },
     methods: {
-        handleChangeActive(index, id) {
-            this.activeId = index;
-            this.activeId2 = -1;
-            this.playListId = id;
+        handleChangeActive(id) {
+            // console.log(id);
+            this.listParams.id = id;
+            this.$router.push({ name: "rankinglist", query: this.listParams });
         },
-        handleChangeActive2(index, id) {
-            this.activeId2 = index;
-            this.activeId = -1;
-            this.playListId = id;
-        },
-        getCommend() {
-
+        async changePageNo(page) {
+            this.listCommentParams.offset = (page - 1) * 20;
+            //重新获取评论数据
+            this.listComments = await reqPlayListCommend(this.listCommentParams)
         },
         content(comment) {
-            return comment.richContent != null ? comment.richContent : comment.content
+            return comment.richContent != null ? comment.richContent : comment.content;
         }
     },
     async mounted() {
+        Object.assign(this.listParams, this.$route.query);
+        Object.assign(this.listCommentParams, this.$route.query);
+
         let data = await reqAllList();
         this.allList.push(data.list.slice(0, 4));
-        this.allList.push(data.list.slice(4))
+        this.allList.push(data.list.slice(4));
         //获取歌单评论
-        let comments = await reqPlayListCommend({ id: this.playListId });
-        this.playComments = comments;
-
+        let comments = await reqPlayListCommend(this.listCommentParams);
+        this.listComments = comments;
         //获取榜单详情
+        let detailData = await reqPlayListDetail(this.listParams);
+        this.listDetail = detailData.playlist;
     }
 }
 </script>
@@ -624,9 +388,9 @@ export default {
                         position: relative;
 
                         &>i {
-                            position: absolute;
-                            right: 5px;
-                            bottom: 8px;
+                            line-height: 31px;
+                            padding-left: 31px;
+                            padding-right: 5px;
                         }
                     }
 
@@ -637,7 +401,6 @@ export default {
 
                         .icon-player {
                             color: inherit;
-                            width: 66px;
                             height: 31px;
                             background: linear-gradient(#3c8bd6, #2273c2);
                             border-top-left-radius: 5px;
@@ -650,8 +413,6 @@ export default {
                                 align-items: center;
                                 width: 100%;
                                 height: 100%;
-                                // background-position: right -428px;
-                                // background-image: url(./images/button2.png);
 
                                 em {
                                     display: block;
@@ -674,23 +435,18 @@ export default {
 
                     .collection {
                         display: block;
-                        width: 84px;
-                        // background: linear-gradient(#fefefe, #f2f2f2);
                         background-position: 0 -977px;
                     }
 
                     .share {
                         background-position: 0 -1225px;
-                        width: 90px;
                     }
 
                     .download {
-                        width: 60px;
                         background-position: 0 -2761px;
                     }
 
                     .comm {
-                        width: 60px;
                         background-position: 0 -1465px;
                     }
                 }
@@ -823,8 +579,8 @@ export default {
 
                         span.play-icon {
                             cursor: pointer;
-                            margin-right: 8px;
-                            width: 17px;
+                            margin-right: 5px;
+                            width: 22px;
                             height: 17px;
                             display: block;
                             background-position: 0 -103px;
@@ -1083,6 +839,20 @@ export default {
                     justify-content: space-between;
                     box-sizing: border-box;
                     margin-left: 60px;
+
+                    .user-ctn {
+                        width: 100%;
+                        display: block;
+                        white-space: normal;
+                        word-break: break-word;
+                        word-wrap: break-word;
+                        white-space: pre-line;
+                        line-height: 20px;
+
+                        a {
+                            color: #0c73c2;
+                        }
+                    }
 
 
                     .timer {
