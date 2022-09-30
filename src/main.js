@@ -6,6 +6,9 @@ import Pagination from '@/components/Pagination'
 import moment from 'moment';
 Vue.config.productionTip = false
 
+//时间本土化
+moment.locale('zh-cn')
+
 //全局过滤器
 Vue.filter('toBeThousand', bigNumberTransform)
 
