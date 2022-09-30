@@ -26,5 +26,16 @@ export const reqPlayListCommend = (params) => requests.get('/api/comment/playlis
 //获取歌单 /top/playlist 有参数
 export const reqPlayList = (params) => requests.get('/api/top/playlist', { method: 'post', params })
 
+<<<<<<< HEAD
+//搜索建议
+export const reqGuessKeyword = (params) => requests.get('/api/search/suggest', { method: 'post', params })
+
+//搜索结果
+export const reqSearch = (params) => requests.get('/api/cloudsearch', {
+    method: 'post', params
+})
+
+=======
+>>>>>>> master
 //使用歌单详情接口,传入排行榜 id 获取排行榜详情数据(排行榜也是歌单的一种)
 export const reqPlayListDetail = (params) => requests.get('/api/playlist/detail', { method: 'post', params })

@@ -35,12 +35,21 @@
         <div class="details">
             <div class="d-hd">
                 <div class="d-list">
+<<<<<<< HEAD
+                    <img :src="listData.coverImgUrl" alt="">
+                    <div class="mask"></div>
+                </div>
+                <div class="d-context">
+                    <h2 class="title">{{listData.name}}</h2>
+                    <p class="d-st"><span class="icon-clock"></span>最新更新：{{listData.updateTime | timer}}<span
+=======
                     <img :src="listDetail.coverImgUrl" alt="">
                     <div class="mask"></div>
                 </div>
                 <div class="d-context">
                     <h2 class="title">{{listDetail.name}}</h2>
                     <p class="d-st"><span class="icon-clock"></span>最新更新：{{listDetail.updateTime | timer}}<span
+>>>>>>> master
                             class="d-time">（刚刚更新）</span></p>
                     <div class="ctr-btns">
                         <div class="ctr-btn player">
@@ -55,25 +64,42 @@
                             </a>
                         </div>
                         <a href="#" class="ctr-btn collection">
+<<<<<<< HEAD
+                            <i>({{listData.subscribedCount}})</i>
+                        </a>
+                        <a href="#" class="ctr-btn share">
+                            <i>({{listData.shareCount}})</i>
+=======
                             <i>({{listDetail.subscribedCount}})</i>
                         </a>
                         <a href="#" class="ctr-btn share">
                             <i>({{listDetail.shareCount}})</i>
+>>>>>>> master
                         </a>
                         <a href="#" class="ctr-btn download">
                             <i>下载</i>
                         </a>
                         <a href="#" class="ctr-btn comm">
+<<<<<<< HEAD
+                            <i>({{listData.commentCount}})</i>
+=======
                             <i>({{listDetail.commentCount}})</i>
+>>>>>>> master
                         </a>
                     </div>
                 </div>
             </div>
             <div class="songList">
                 <div class="s-hd">
+<<<<<<< HEAD
+                    <h3>歌曲列表<span class="s-count">{{listData.trackCount}}首歌</span></h3>
+
+                    <span class="f-right">播放：<i>{{listData.playCount}}</i>次</span>
+=======
                     <h3>歌曲列表<span class="s-count">{{listDetail.trackCount}}首歌</span></h3>
 
                     <span class="f-right">播放：<i>{{listDetail.playCount}}</i>次</span>
+>>>>>>> master
                 </div>
                 <table class="s-tb">
                     <thead>
@@ -85,14 +111,22 @@
                         </tr>
                     </thead>
                     <tbody>
+<<<<<<< HEAD
+                        <tr v-for="song,i in listData.tracks" :key="song.id">
+=======
                         <tr v-for="song,i in songList" :key="song.id">
+>>>>>>> master
                             <td class="s-td-1">
                                 <span class="no">{{i+1}}</span>
                                 <span class="no-icon no-icon-up">1</span>
                             </td>
                             <td class="s-td-2">
                                 <a href="#" class="song" v-if="i < 3">
+<<<<<<< HEAD
+                                    <img :src="song.al.picUrl" alt="">
+=======
                                     <img :src="song.al.picUrl" alt="歌曲封面">
+>>>>>>> master
                                 </a>
                                 <span class="play-icon"></span>
                                 <a href="#" class="songName">{{song.name}}</a>
@@ -108,6 +142,10 @@
                             </td>
                             <td class="s-td-4">
                                 {{song.ar[0].name}}
+<<<<<<< HEAD
+                                <span v-if="song.ar.length >1" v-for="n,i in song.ar.slice(1)">\{{n.name}}</span>
+=======
+>>>>>>> master
                             </td>
                         </tr>
                     </tbody>
@@ -116,7 +154,11 @@
             <div class="comment">
                 <div class="c-hd">
                     <h2>评论</h2>
+<<<<<<< HEAD
+                    <p>共{{listData.commentCount}}条评论</p>
+=======
                     <p>共{{listDetail.commentCount}}条评论</p>
+>>>>>>> master
                 </div>
                 <div class="c-send">
                     <img src="./images/default_avatar.jpg" alt="" class="avatar">
@@ -147,14 +189,18 @@
                         <a href="#" class="user-avatar"><img :src="comment.user.avatarUrl" alt=""></a>
                         <div class="ctn">
                             <div class="user-ctn">
-                                <a href="#">{{comment.user.nickname}}</a>
+                                <a href="#" style="color:#0c73c2;">{{comment.user.nickname}}</a>
                                 <span v-html="' : '+ content(comment)"></span>
                             </div>
                             <div class="timer">
                                 <div class="time">{{comment.time | timer}}</div>
                                 <div class="c-reply">
                                     <a href="#" class="zan"><i class="icon-zan"></i><em
+<<<<<<< HEAD
+                                            v-if="comment.likedCount>0">({{comment.likedCount}})</em></a>
+=======
                                             v-if="comment.likedCount">({{comment.likedCount}})</em></a>
+>>>>>>> master
                                     <span>|</span>
                                     <a href="#" class="reply">回复</a>
                                 </div>
@@ -163,7 +209,12 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
+            <Pagination :total="playComments.total" :pageNo="pageNo" :size="commentParams.limit"
+                @changePageNo="handleChangePage" />
+=======
             <Pagination :total="listComments.total" size="20" :pageNo="pageNo" @changePageNo="changePageNo" />
+>>>>>>> master
         </div>
     </div>
 </template>
@@ -174,6 +225,31 @@ export default {
     data() {
         return {
             allList: [],
+<<<<<<< HEAD
+            listParams: {
+                id: 19723756
+            },
+            playComments: [],
+            listData: {},
+            commentParams: {
+                limit: 20,
+                offset: 0,
+                id: 19723756
+            }
+        };
+    },
+    computed: {
+        pageNo() {
+            return this.commentParams.offset / this.commentParams.limit == 0 ? 1 : this.commentParams.offset / this.commentParams.limit + 1;
+        }
+    },
+    watch: {
+        $route: {
+            async handler() {
+                this.playComments = await reqPlayListCommend(this.commentParams);
+                let data = await reqPlayListDetail(this.listParams);
+                this.listData = data.playlist;
+=======
             listParams: { id: 19723756 },
             listComments: [],
             listDetail: { tracks: [] },
@@ -204,11 +280,25 @@ export default {
         pageNo: {
             get() {
                 return this.listCommentParams.offset / this.listCommentParams.limit == 0 ? 1 : this.listCommentParams.offset / this.listCommentParams.limit + 1;
+>>>>>>> master
             }
         }
     },
     methods: {
         handleChangeActive(id) {
+<<<<<<< HEAD
+            this.listParams.id = id;
+            this.$router.push({ name: "rankinglist", query: this.listParams });
+        },
+        content(comment) {
+            return comment.richContent != null ? comment.richContent : comment.content;
+        },
+        async handleChangePage(page) {
+            let limit = this.commentParams.limit;
+            this.commentParams.offset = (page - 1) * limit;
+
+            this.playComments = await reqPlayListCommend(this.commentParams)
+=======
             // console.log(id);
             this.listParams.id = id;
             this.$router.push({ name: "rankinglist", query: this.listParams });
@@ -220,21 +310,33 @@ export default {
         },
         content(comment) {
             return comment.richContent != null ? comment.richContent : comment.content;
+>>>>>>> master
         }
     },
     async mounted() {
         Object.assign(this.listParams, this.$route.query);
+<<<<<<< HEAD
+=======
         Object.assign(this.listCommentParams, this.$route.query);
 
+>>>>>>> master
         let data = await reqAllList();
         this.allList.push(data.list.slice(0, 4));
         this.allList.push(data.list.slice(4));
         //获取歌单评论
+<<<<<<< HEAD
+        let comments = await reqPlayListCommend(this.commentParams);
+        this.playComments = comments;
+        //获取榜单详情
+        let lists = await reqPlayListDetail(this.listParams);
+        this.listData = lists.playlist;
+=======
         let comments = await reqPlayListCommend(this.listCommentParams);
         this.listComments = comments;
         //获取榜单详情
         let detailData = await reqPlayListDetail(this.listParams);
         this.listDetail = detailData.playlist;
+>>>>>>> master
     }
 }
 </script>
@@ -388,9 +490,15 @@ export default {
                         position: relative;
 
                         &>i {
+<<<<<<< HEAD
+                            padding-right: 5px;
+                            line-height: 31px;
+                            padding-left: 31px;
+=======
                             line-height: 31px;
                             padding-left: 31px;
                             padding-right: 5px;
+>>>>>>> master
                         }
                     }
 
@@ -841,6 +949,13 @@ export default {
                     margin-left: 60px;
 
                     .user-ctn {
+<<<<<<< HEAD
+                        width: 600px;
+                        line-height: 20px;
+                        white-space: normal;
+                        word-wrap: break-word;
+                    }
+=======
                         width: 100%;
                         display: block;
                         white-space: normal;
@@ -854,6 +969,7 @@ export default {
                         }
                     }
 
+>>>>>>> master
 
                     .timer {
                         display: flex;

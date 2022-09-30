@@ -143,6 +143,10 @@ export default {
     computed: {
         pageNo: {
             get() {
+<<<<<<< HEAD
+                // console.log(this.playParams.offset / this.playParams.limit)
+=======
+>>>>>>> master
                 return this.playParams.offset / this.playParams.limit == 0 ? 1 : this.playParams.offset / this.playParams.limit + 1;
             }
         }
