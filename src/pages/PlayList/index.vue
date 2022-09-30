@@ -121,8 +121,7 @@
                 </li>
             </ul>
         </div>
-        <Pagination :total="playlists.total" :size="35" :pageNo="pageNo" :pageSize="7"
-            @changePageNo="handleChangePage" />
+        <Pagination :total="playlists.total" :size="35" :pageNo="pageNo" @changePageNo="handleChangePage" />
     </div>
 </template>
 <script>
@@ -144,7 +143,7 @@ export default {
     computed: {
         pageNo: {
             get() {
-                console.log(this.playParams.offset / this.playParams.limit)
+                // console.log(this.playParams.offset / this.playParams.limit)
                 return this.playParams.offset / this.playParams.limit == 0 ? 1 : this.playParams.offset / this.playParams.limit + 1;
             }
         }

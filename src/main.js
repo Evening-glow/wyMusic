@@ -8,8 +8,10 @@ Vue.config.productionTip = false
 
 //全局过滤器
 Vue.filter('toBeThousand', bigNumberTransform)
+
+moment.locale('zh-cn')
 Vue.filter('timer', function (time) {
-  return moment(time).fromNow()
+  return moment(time).calendar()
 });
 
 //全局组件
