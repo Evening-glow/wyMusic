@@ -1,58 +1,59 @@
 <template>
     <div class="searchContainer">
         <div class="search-hd">
-            <input type="text">
+            <input type="text" v-model.trim="params.keywords" @keydown.enter="handleEnter" @blur="isShow=false"
+                @focus="isShow=true">
             <a href="#" class="icon-search"></a>
-            <div class="searchTips" style="display:none">
-                <p class="t-hd"><a href="#">搜“s” 相关用户&gt;</a></p>
+            <div class="searchTips" v-if="isShow">
+                <p class="t-hd"><a href="#">搜“{{params.keywords}}” 相关用户&gt;</a></p>
                 <div class="info-container">
-                    <div class="itm">
+                    <div class="itm" v-if="isHave('songs')">
                         <div class="itm-lf">
                             <i></i>
                             <span>单曲</span>
                         </div>
                         <ul class="itm-rt">
-                            <li><a href="#">水星记水星记水星记水星记水星记水星记水星记水星记水星记水星记水星记水星记水星记水星记</a></li>
-                            <li><a href="#">水星记</a></li>
-                            <li><a href="#">水星记</a></li>
-                            <li><a href="#">水星记</a></li>
-                            <li><a href="#">水星记</a></li>
+                            <li v-for="song,i in guess.songs" :key="song.id"><a
+                                    href="#">{{song.name}}-{{song.artists[0].name}}</a>
+                            </li>
                         </ul>
                     </div>
-                    <div class="itm">
+                    <div class="itm" v-if="isHave('artists')">
                         <div class="itm-lf">
                             <i class="icn-singer"></i>
                             <span>歌手</span>
                         </div>
                         <ul class="itm-rt itm-bg">
-                            <li><a href="#">水星记</a></li>
+                            <li v-for="singer,i in guess.artists" :key="singer.id"><a href="#">{{singer.name}}</a>
+                            </li>
                         </ul>
                     </div>
-                    <div class="itm">
+                    <div class="itm" v-if="isHave('albums')">
                         <div class="itm-lf">
                             <i class="icn-video"></i>
                             <span>专辑</span>
                         </div>
                         <ul class="itm-rt">
 
-                            <li><a href="#">水星记</a></li>
+                            <li v-for="album,i in guess.albums" :key="album.id"><a
+                                    href="#">{{album.name}}-{{album.artist.name}}</a>
+                            </li>
                         </ul>
                     </div>
-                    <div class="itm">
+                    <div class="itm" v-if="isHave('playlists')">
                         <div class="itm-lf">
                             <i class="icn-sheet"></i>
                             <span>歌单</span>
                         </div>
                         <ul class="itm-rt itm-bg">
-                            <li><a href="#">水星记</a></li>
-                            <li><a href="#">水星记</a></li>
+                            <li v-for="list,i in guess.playlists" :key="list.id"><a href="#">{{list.name}}</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
         <div class="resContainer">
-            <h3>搜索“chang”，找到<span class="redTxt">20</span>首单曲</h3>
+            <h3>搜索“{{params.keywords}}”，找到<span class="redTxt">20</span>首单曲</h3>
             <div class="result">
                 <ul class="res-hd">
                     <li class="active">单曲</li>
@@ -65,10 +66,10 @@
                     <li>用户</li>
                 </ul>
                 <div class="res-tbody">
-                    <div class="res-tr">
+                    <div class="res-tr" v-for="itm,i in typeStr" :key="itm.id">
                         <div class="song">
                             <span></span>
-                            <a href="#">lange</a>
+                            <a href="#">{{itm.name}}<i v-if="itm.tns" style="color:#ccc;">-（{{itm.tns[0]}}）</i></a>
                         </div>
                         <div class="td-rt">
                             <div class="ctrs">
@@ -78,137 +79,12 @@
                                 <span class="dl"></span>
                             </div>
                             <div class="singers">
-                                <a href="#">小酷Coola</a>
-                                <span>/</span>
-                                <a href="#">土人儿TRE</a>
+                                <a href="#">{{itm.ar[0].name}}</a>
+                                <span v-if="itm.ar.length>1">/</span>
+                                <a href="#" v-for="a,i in itm.ar.slice(1)" :key="a.id">{{a.name}}/</a>
                             </div>
                             <div class="album">
-                                <a href="#">《1SHOT BUND TAPE》</a>
-                            </div>
-                            <p>03:31</p>
-                        </div>
-                    </div>
-                    <div class="res-tr">
-                        <div class="song">
-                            <span></span>
-                            <a href="#">lange</a>
-                        </div>
-                        <div class="td-rt">
-                            <div class="ctrs">
-                                <span class="add"></span>
-                                <span class="coll"></span>
-                                <span class="share"></span>
-                                <span class="dl"></span>
-                            </div>
-                            <div class="singers">
-                                <a href="#">酷哥儿</a>
-                                <span>/</span>
-                                <a href="#">迅哥儿</a>
-                                <span>/</span>
-                                <a href="#">张三李四</a>
-                            </div>
-                            <div class="album">
-                                <a href="#">《我们仨一起去郊游去潘峰去钓鱼》</a>
-                            </div>
-                            <p>03:31</p>
-                        </div>
-                    </div>
-                    <div class="res-tr">
-                        <div class="song">
-                            <span></span>
-                            <a href="#">lange</a>
-                        </div>
-                        <div class="td-rt">
-                            <div class="ctrs">
-                                <span class="add"></span>
-                                <span class="coll"></span>
-                                <span class="share"></span>
-                                <span class="dl"></span>
-                            </div>
-                            <div class="singers">
-                                <a href="#">酷哥儿</a>
-                                <span>/</span>
-                                <a href="#">迅哥儿</a>
-                                <span>/</span>
-                                <a href="#">张三李四</a>
-                            </div>
-                            <div class="album">
-                                <a href="#">《我们仨一起去郊游去潘峰去钓鱼》</a>
-                            </div>
-                            <p>03:31</p>
-                        </div>
-                    </div>
-                    <div class="res-tr">
-                        <div class="song">
-                            <span></span>
-                            <a href="#">lange</a>
-                        </div>
-                        <div class="td-rt">
-                            <div class="ctrs">
-                                <span class="add"></span>
-                                <span class="coll"></span>
-                                <span class="share"></span>
-                                <span class="dl"></span>
-                            </div>
-                            <div class="singers">
-                                <a href="#">酷哥儿</a>
-                                <span>/</span>
-                                <a href="#">迅哥儿</a>
-                                <span>/</span>
-                                <a href="#">张三李四</a>
-                            </div>
-                            <div class="album">
-                                <a href="#">《我们仨一起去郊游去潘峰去钓鱼》</a>
-                            </div>
-                            <p>03:31</p>
-                        </div>
-                    </div>
-                    <div class="res-tr">
-                        <div class="song">
-                            <span></span>
-                            <a href="#">lange</a>
-                        </div>
-                        <div class="td-rt">
-                            <div class="ctrs">
-                                <span class="add"></span>
-                                <span class="coll"></span>
-                                <span class="share"></span>
-                                <span class="dl"></span>
-                            </div>
-                            <div class="singers">
-                                <a href="#">酷哥儿</a>
-                                <span>/</span>
-                                <a href="#">迅哥儿</a>
-                                <span>/</span>
-                                <a href="#">张三李四</a>
-                            </div>
-                            <div class="album">
-                                <a href="#">《我们仨一起去郊游去潘峰去钓鱼》</a>
-                            </div>
-                            <p>03:31</p>
-                        </div>
-                    </div>
-                    <div class="res-tr">
-                        <div class="song">
-                            <span></span>
-                            <a href="#">lange</a>
-                        </div>
-                        <div class="td-rt">
-                            <div class="ctrs">
-                                <span class="add"></span>
-                                <span class="coll"></span>
-                                <span class="share"></span>
-                                <span class="dl"></span>
-                            </div>
-                            <div class="singers">
-                                <a href="#">酷哥儿</a>
-                                <span>/</span>
-                                <a href="#">迅哥儿</a>
-                                <span>/</span>
-                                <a href="#">张三李四</a>
-                            </div>
-                            <div class="album">
-                                <a href="#">《我们仨一起去郊游去潘峰去钓鱼》</a>
+                                <a href="#">《{{itm.al.name}}》</a>
                             </div>
                             <p>03:31</p>
                         </div>
@@ -218,6 +94,83 @@
         </div>
     </div>
 </template>
+<script>
+import { reqSearch, reqGuessKeyword } from '@/api';
+export default {
+    name: 'Search',
+    data() {
+        return {
+            params: {
+                limit: 20,
+                keywords: '',
+                type: 1,
+            },
+            searchRes: {},
+            guess: { order: '' },
+            isShow: false
+        }
+    },
+    methods: {
+        async handleEnter(e) {
+            //重新获取数据
+            let data = await reqSearch(this.params);
+            this.searchRes = data.result;
+            this.$router.push({ name: 'search', query: this.params });
+            this.isShow = false;
+            e.target.blur();
+        },
+        isHave(string) {
+            if (Object.hasOwn(this.guess, 'order')) {
+                return this.guess.order.indexOf(string) >= 0;
+            } else {
+                return false
+            }
+
+        }
+    },
+    watch: {
+        params: {
+            deep: true,
+            async handler() {
+                if (this.params.keywords) {
+                    let guessData = await reqGuessKeyword({ keywords: this.params.keywords });
+                    this.guess = guessData.result;
+                }
+            }
+        },
+        $route: {
+            async handler() {
+                Object.assign(this.params, this.$route.query);
+
+                //重新获取数据
+                let data = await reqSearch(this.params);
+                this.searchRes = data.result;
+            }
+        }
+    },
+    computed: {
+        typeStr() {
+            let str = {
+                '1': 'songs',
+                '10': 'albums',
+                '100': 'artists',
+                '1000': 'playlists'
+            }
+            let type = str[this.params.type];
+            console.log(type)
+            return this.searchRes[type];
+        }
+    },
+    async mounted() {
+        //获取query参数记录到data中
+        Object.assign(this.params, this.$route.query);
+        //获取搜索结果
+        let data = await reqSearch(this.params);
+        console.log('search', data)
+        this.searchRes = data.result;
+    }
+}
+</script>
 <style lang="less" scoped>
 @import '@/less/config.less';
 

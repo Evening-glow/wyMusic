@@ -17,7 +17,53 @@
             </div>
             <div class="searchContainer">
                 <span class="searchIcon"></span>
-                <input type="text" placeholder="音乐/视频/电台/用户" @keydown.enter="$router.push({name:'search'})">
+                <input type="text" placeholder="音乐/视频/电台/用户" v-model.trim="searchParams.keywords"
+                    @keydown.enter="handleEnter">
+                <div class="searchTips" v-if="isShow">
+                    <p class="t-hd"><a href="#">搜“{{searchParams.keywords}}” 相关用户&gt;</a></p>
+                    <div class="info-container">
+                        <div class="itm" v-if="isHave('songs')">
+                            <div class="itm-lf">
+                                <i></i>
+                                <span>单曲</span>
+                            </div>
+                            <ul class="itm-rt">
+                                <li v-for="song,i in guess.songs" :key="song.id"><a
+                                        href="#">{{song.name}}-{{song.artists[0].name}}</a></li>
+                            </ul>
+                        </div>
+                        <div class="itm" v-if="isHave('artists')">
+                            <div class="itm-lf">
+                                <i class="icn-singer"></i>
+                                <span>歌手</span>
+                            </div>
+                            <ul class="itm-rt itm-bg">
+                                <li v-for="singer,i in guess.artists" :key="singer.id"><a href="#">{{singer.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="itm" v-if="isHave('albums')">
+                            <div class="itm-lf">
+                                <i class="icn-video"></i>
+                                <span>专辑</span>
+                            </div>
+                            <ul class="itm-rt">
+
+                                <li v-for="album,i in guess.albums" :key="album.id"><a
+                                        href="#">{{album.name}}-{{album.artist.name}}</a></li>
+                            </ul>
+                        </div>
+                        <div class="itm" v-if="isHave('playlists')">
+                            <div class="itm-lf">
+                                <i class="icn-sheet"></i>
+                                <span>歌单</span>
+                            </div>
+                            <ul class="itm-rt itm-bg">
+                                <li v-for="list,i in guess.playlists" :key="list.id"><a href="#">{{list.name}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
             <a href="#" class="creatorCenter">创作者中心</a>
             <a href="#" class="login">登录</a>
@@ -25,6 +71,7 @@
     </header>
 </template>
 <script>
+import { reqGuessKeyword } from '@/api'
 export default {
     name: 'MyHeader',
     data() {
@@ -32,7 +79,37 @@ export default {
             searchParams: {
                 limit: 20,
                 offset: 0,
-                type:1
+                type: 1,
+                keywords: ''
+            },
+            guess: {},
+            isShow: false
+        }
+    },
+    watch: {
+        searchParams: {
+            deep: true,
+            async handler() {
+                if (this.searchParams.keywords) {
+                    //当输入的关键字变化时，重新获取推荐关键词
+                    let guessDate = await reqGuessKeyword({ keywords: this.searchParams.keywords });
+                    this.guess = guessDate.result;
+                    this.isShow = true
+                }
+            }
+        }
+    },
+    methods: {
+        handleEnter() {
+            //跳转到search页
+            this.$router.push({ name: 'search', query: this.searchParams });
+            this.isShow = false;
+        },
+        isHave(string) {
+            if (Object.hasOwn(this.guess, 'order')) {
+                return this.guess.order.indexOf(string) >= 0;
+            } else {
+                return false
             }
         }
     }
@@ -140,6 +217,101 @@ header {
                 font-size: 12px;
                 outline: none;
             }
+
+            .searchTips {
+                position: absolute;
+                z-index: 120;
+                top: 56px;
+                width: 250px;
+                box-sizing: border-box;
+                border: 1px solid #bebebe;
+                border-radius: 4px;
+                background: #fff;
+                box-shadow: 0 4px 7px #555;
+                text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+
+                .t-hd {
+                    height: 17px;
+                    padding: 11px 10px;
+                    font-size: 12px;
+                    color: #666;
+                }
+
+                .info-container {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+
+                    .itm {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: flex-start;
+                        border-top: 1px solid #ccc;
+
+                        .itm-bg {
+                            background-color: #f9f8f8;
+                        }
+
+                        .itm-lf {
+                            width: 52px;
+                            padding: 10px 5px;
+                            flex-shrink: 0;
+                            text-align: center;
+                            color: #000;
+
+
+                            i {
+                                display: inline-block;
+                                line-height: 15px;
+                                vertical-align: middle;
+                                width: 14px;
+                                height: 15px;
+                                background-position: -35px -300px;
+                                background-image: url(./images/icon.png);
+                            }
+
+                            .icn-singer {
+                                background-position: -50px -300px;
+                            }
+
+                            .icn-video {
+                                background-position: -35px -320px;
+                            }
+
+                            .icn-sheet {
+                                background-position: -50px -320px;
+                            }
+                        }
+
+                        .itm-rt {
+                            flex-grow: 1;
+                            padding: 6px 0;
+                            border-left: 1px solid #e2e2e2;
+
+                            li {
+                                padding: 6px;
+                                box-sizing: border-box;
+
+                                &:hover {
+                                    background-color: #ccc;
+                                }
+
+                                a {
+                                    width: 100px;
+                                    font-size: 12px;
+                                    display: inline-block;
+                                    text-overflow: ellipsis;
+                                    overflow: hidden;
+                                    white-space: nowrap;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         .creatorCenter {

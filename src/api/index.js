@@ -25,3 +25,11 @@ export const reqPlayListCommend = (params) => requests.get('/api/comment/playlis
 
 //获取歌单 /top/playlist 有参数
 export const reqPlayList = (params) => requests.get('/api/top/playlist', { method: 'post', params })
+
+//搜索建议
+export const reqGuessKeyword = (params) => requests.get('/api/search/suggest', { method: 'post', params })
+
+//搜索结果
+export const reqSearch = (params) => requests.get('/api/cloudsearch', {
+    method: 'post', params
+})
