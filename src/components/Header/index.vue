@@ -102,7 +102,9 @@ export default {
     methods: {
         handleEnter() {
             //跳转到search页
-            this.$router.push({ name: 'search', query: this.searchParams });
+            if (this.searchParams.keywords) {
+                this.$router.push({ name: 'search', query: this.searchParams });
+            }
             this.isShow = false;
         },
         isHave(string) {
