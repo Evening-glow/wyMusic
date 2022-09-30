@@ -56,6 +56,7 @@
             <h3>搜索“{{params.keywords}}”，找到<span class="redTxt">20</span>首单曲</h3>
             <div class="result">
                 <ul class="res-hd">
+                    <!--  1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合, 2000:声音 -->
                     <li class="active">单曲</li>
                     <li>歌手</li>
                     <li>专辑</li>
@@ -107,7 +108,20 @@ export default {
             },
             searchRes: {},
             guess: { order: '' },
-            isShow: false
+            isShow: false,
+            typeStr: {
+                '1': 'songs',
+                '10': 'albums',
+                '100': 'artists',
+                '1000': 'playlists',
+                '1002': 'userprofiles',
+                '1004': 'mvs',
+                '1006': 'songs',
+                '1009': 'djRadios',
+                '1014': 'videos',
+                '1018': '',
+                '2000': 'resources'
+            }
         }
     },
     methods: {
@@ -126,6 +140,12 @@ export default {
                 return false
             }
 
+        },
+        async changeType(type) {
+            this.params.type = type;
+            let data = await reqSearch(this.params);
+            this.searchRes = data.result;
+            this.$router.push({ name: 'search', query: this.params });
         }
     },
     watch: {
@@ -150,14 +170,9 @@ export default {
     },
     computed: {
         typeStr() {
-            let str = {
-                '1': 'songs',
-                '10': 'albums',
-                '100': 'artists',
-                '1000': 'playlists'
-            }
+            let str = this.typeStr;
             let type = str[this.params.type];
-            console.log(type)
+            // console.log(type)
             return this.searchRes[type];
         }
     },
