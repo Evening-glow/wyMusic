@@ -67,7 +67,7 @@
                     <li>用户</li>
                 </ul>
                 <div class="res-tbody">
-                    <div class="res-tr" v-for="itm,i in typeStr" :key="itm.id">
+                    <div class="res-tr" v-for="itm,i in getTypeStr" :key="itm.id">
                         <div class="song">
                             <span></span>
                             <a href="#">{{itm.name}}<i v-if="itm.tns" style="color:#ccc;">-（{{itm.tns[0]}}）</i></a>
@@ -169,7 +169,7 @@ export default {
         }
     },
     computed: {
-        typeStr() {
+        getTypeStr() {
             let str = this.typeStr;
             let type = str[this.params.type];
             // console.log(type)
