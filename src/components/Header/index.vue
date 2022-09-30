@@ -27,7 +27,15 @@
 <script>
 export default {
     name: 'MyHeader',
-
+    data() {
+        return {
+            searchParams: {
+                limit: 20,
+                offset: 0,
+                type:1
+            }
+        }
+    }
 }
 </script>
 <style lang="less" scoped>
