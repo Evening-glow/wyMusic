@@ -98,7 +98,7 @@
                                 <a href="#" class="songName">{{song.name}}</a>
                             </td>
                             <td class="s-td-3">
-                                <span>04:21</span>
+                                <span>{{song.dt | duration}}</span>
                                 <div class="contrl-btns">
                                     <a href="#" class="icn icn-add"></a>
                                     <a href="#" class="icn icn-fav"></a>

@@ -87,7 +87,7 @@
                             <div class="album">
                                 <a href="#">《{{itm.al.name}}》</a>
                             </div>
-                            <p>03:31</p>
+                            <p>{{itm.dt | duration}}</p>
                         </div>
                     </div>
                 </div>
