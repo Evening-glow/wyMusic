@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router'
-import moment from 'moment';
+import moment from 'moment'
+import store from '@/store'
 import { bigNumberTransform } from '@/utils'
 import Pagination from '@/components/Pagination'
 
@@ -27,5 +28,6 @@ Vue.component(Pagination.name, Pagination);
 
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app')

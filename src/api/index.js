@@ -34,3 +34,6 @@ export const reqSearch = (params) => requests.get('/api/cloudsearch', {
 })
 //使用歌单详情接口,传入排行榜 id 获取排行榜详情数据(排行榜也是歌单的一种)
 export const reqPlayListDetail = (params) => requests.get('/api/playlist/detail', { method: 'post', params })
+
+///api/song/enhance/player/url
+export const reqSong = (params) => requests.get('/get/song/enhance/player/url', { method: 'post', params })

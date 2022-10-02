@@ -1,6 +1,7 @@
 <template>
     <!-- 播放条 -->
     <div class="playerCtn">
+        <audio :src="song" ref="audio"></audio>
         <div class="showCtl">
             <a href="#"><i></i></a>
             <div class="ct"></div>
@@ -9,14 +10,15 @@
             <div class="ctls">
                 <div class="btns">
                     <a href="#" class="s-pre"></a>
-                    <a href="#" class="s-play"></a>
+                    <a href="javascript:void" :style="{'backgroundPositionY':isPlay?'-165px':'-204px'}" class="s-play"
+                        @click="handlePlay"></a>
                     <a href="#" class="s-next"></a>
                 </div>
                 <div class="al">
                     <img src="./images/playImg.jpg" alt="">
                     <a class="mask" href="#"></a>
                 </div>
-                <div class="flag">
+                <div class="flag" @mouseup="moveover">
                     <div class="f-t">
                         <a href="#">Faded</a>
                         <a href="#" class="mv"></a>
@@ -24,10 +26,11 @@
                         <a href="#" class="link"></a>
                     </div>
                     <div class="f-b">
-                        <div class="pro-bar">
-                            <div class="pl-bar bar"></div>
-                            <div class="cache-bar bar"></div>
-                            <div class="pl-ico"></div>
+                        <div class="pro-bar" @mousemove="movestart" ref="prograss" @mousedown="movedown">
+                            <div class="pl-bar bar" ref="proPlay" style="z-index:200;"></div>
+                            <div class="cache-bar bar" style="z-index:100;"></div>
+                            <div class="pl-ico" style="z-index:300;" ref="proCtl" @mousemove="movestart"
+                                @mousedown="movebegin"></div>
                             <div class="cur"></div>
                         </div>
                         <span><i>02:41</i>/03:48</span>
@@ -57,8 +60,103 @@
     </div>
 </template>
 <script>
+import { mapState } from 'vuex';
+import { reqSong } from '@/api';
+
 export default {
-    name: 'Player'
+    name: 'Player',
+    data() {
+        return {
+            song: '',
+            lenth: 0,
+            isPlay: false,
+            move: false,
+            clickmove: false,
+            mouseStartX: 0,
+            progressLength: 0,
+            startLeft: 0
+        }
+    },
+    computed: {
+        ...mapState('player', ['playType'])
+    },
+    methods: {
+        handlePlay() {
+            if (this.isPlay) {
+                this.$refs.audio.pause()
+                this.isPlay = false
+                //移除计时器
+                clearInterval(this.timer)
+            } else {
+                this.$refs.audio.play()
+                this.isPlay = true
+                //开启一个计时器，每秒改变进度条
+                this.timer = setInterval(() => {
+                    let newPercent = this.$refs.audio.currentTime * 100 / this.lenth * 1000;
+                    // console.log(newPercent)
+                    this.$refs.proCtl.style.left = newPercent + '%';
+                    this.$refs.proPlay.style.width = newPercent + '%';
+                }, 1000)
+            }
+        },
+        // 滑块点击时
+        movebegin() { this.move = true; this.clickmove = true; },
+        // 滑块松开时
+        moveover() {
+            this.move = false;
+            if (this.clickmove) {
+                let newPercent = (this.mouseStartX / this.progressLength) * 100
+                let a = newPercent / 100 * this.lenth / 1000
+                this.$refs.audio.currentTime = a
+                //当还没播放时播放
+                this.handlePlay();
+            }
+            this.clickmove = false;
+        },
+        // 滑块拖拽时
+        movestart(e) {
+            if (this.move) {
+                this.mouseStartX = e.clientX - this.startLeft
+                this.progressLength = this.$refs.prograss.getBoundingClientRect().width
+                let newPercent = (this.mouseStartX / this.progressLength) * 100
+                if (newPercent <= 100) {
+                    this.$refs.proCtl.style.left = newPercent + '%';
+                    this.$refs.proPlay.style.width = newPercent + '%';
+                } else {
+                    this.moveover()
+                }
+            }
+        },
+        //点击进度条
+        movedown(e) {
+            //用点击位置减去播放原点位置，就是当前播放条的宽度
+            this.mouseStartX = e.clientX - this.startLeft
+            //获取总播放条宽度，除以100算出宽度的%单位
+            this.progressLength = this.$refs.prograss.getBoundingClientRect().width
+            let newPercent = (this.mouseStartX / this.progressLength) * 100
+            if (newPercent <= 100) {
+                this.$refs.proCtl.style.left = newPercent + '%';
+                this.$refs.proPlay.style.width = newPercent + '%';
+            } else {
+                this.moveover()
+            }
+            //总长度*百分长度 * （总时长秒数/总长度）
+            let a = newPercent / 100 * this.lenth / 1000
+            this.$refs.audio.currentTime = a
+
+            //点击进度条并播放
+            this.handlePlay();
+        }
+    },
+    async mounted() {
+        let d = await reqSong({ id: '85580', ids: '[85580]', br: '3200000' })
+        console.log(d)
+        this.song = d.data[0].url;
+        this.lenth = d.data[0].time
+
+        //获取当前播放控件的原点位置，在播放器拖动时不会改变
+        this.startLeft = this.$refs.proCtl.getBoundingClientRect().left
+    }
 }
 </script>
 <style scoped lang="less">
@@ -253,12 +351,10 @@ export default {
                         }
 
                         .pl-bar {
-                            width: 50px;
                             background-position: left -66px;
                         }
 
                         .cache-bar {
-                            width: 100px;
                             background-position: right -30px;
                         }
 

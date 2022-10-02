@@ -1,4 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
+
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
@@ -18,6 +19,11 @@ module.exports = defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         pathRewrite: { "^/api": "" }//路径重写
+      },
+      "/get": {
+        target: 'http://music.163.com/api',
+        changeOrigin: true,
+        pathRewrite: { "^/get": "" }
       }
     }
   }
