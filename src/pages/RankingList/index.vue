@@ -94,11 +94,11 @@
                                 <a href="#" class="song" v-if="i < 3">
                                     <img :src="song.al.picUrl" alt="">
                                 </a>
-                                <span class="play-icon"></span>
+                                <span class="play-icon" @click="handleSetSong(song.id)"></span>
                                 <a href="#" class="songName">{{song.name}}</a>
                             </td>
                             <td class="s-td-3">
-                                <span>04:21</span>
+                                <span>{{song.dt | duration}}</span>
                                 <div class="contrl-btns">
                                     <a href="#" class="icn icn-add"></a>
                                     <a href="#" class="icn icn-fav"></a>
@@ -170,7 +170,7 @@
     </div>
 </template>
 <script>
-import { reqAllList, reqPlayListCommend, reqPlayListDetail } from '@/api'
+import { reqAllList, reqPlayListCommend, reqPlayListDetail, reqSong, reqSongDetail } from '@/api'
 export default {
     name: "RankingList",
     data() {
@@ -215,6 +215,22 @@ export default {
             this.commentParams.offset = (page - 1) * limit;
 
             this.playComments = await reqPlayListCommend(this.commentParams)
+        },
+        //播放歌曲
+        async handleSetSong(id) {
+            //将获取的播放数据对象存放到store中
+            let d = await reqSong({ id, ids: `[${id}]`, br: 3200000 });
+            let detail = await reqSongDetail({ ids: id })
+            let { ar, al } = detail.songs[0]
+
+            let playlist = this.$store.state['player'].playlist;
+
+            //阻止重复添加相同歌曲
+            if (!playlist.filter(s => s.id == id).length) {
+                this.$store.dispatch('player/incrementSong', { ...d.data[0], ar, al })
+            } else {
+                alert('在列表中已存在，请勿重复添加');
+            }
         }
     },
     async mounted() {
