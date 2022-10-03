@@ -1,7 +1,7 @@
 <template>
     <!-- 播放条 -->
     <div class="playerCtn">
-        <audio :src="song" ref="audio"></audio>
+        <audio :src="getSong.url ? getSong.url : '' " ref="audio" @ended="ended" preload="auto"></audio>
         <div class="showCtl">
             <a href="#"><i></i></a>
             <div class="ct"></div>
@@ -10,19 +10,19 @@
             <div class="ctls">
                 <div class="btns">
                     <a href="#" class="s-pre"></a>
-                    <a href="javascript:void" :style="{'backgroundPositionY':isPlay?'-165px':'-204px'}" class="s-play"
-                        @click="handlePlay"></a>
+                    <a href="#" :style="{'backgroundPositionY':isPlay?'-165px':'-204px'}" class="s-play"
+                        @click.prevent="handlePlay"></a>
                     <a href="#" class="s-next"></a>
                 </div>
                 <div class="al">
-                    <img src="./images/playImg.jpg" alt="">
+                    <img :src="getSongInfo.picUrl" alt="">
                     <a class="mask" href="#"></a>
                 </div>
                 <div class="flag" @mouseup="moveover">
                     <div class="f-t">
-                        <a href="#">Faded</a>
+                        <a href="#">{{getSongInfo.name}}</a>
                         <a href="#" class="mv"></a>
-                        <span class="ar">Alan Walker</span>
+                        <span class="ar">{{getSongInfo.arName}}</span>
                         <a href="#" class="link"></a>
                     </div>
                     <div class="f-b">
@@ -33,7 +33,7 @@
                                 @mousedown="movebegin"></div>
                             <div class="cur"></div>
                         </div>
-                        <span><i>02:41</i>/03:48</span>
+                        <span><i>{{cTime | duration}}</i>/{{getSong.time?getSong.time:0 | duration}}</span>
                     </div>
                 </div>
                 <div class="open-fl">
@@ -43,8 +43,8 @@
                 </div>
                 <div class="ctr-fl">
                     <a href="#" class="ctr-ico vs"></a>
-                    <a href="#" class="ctr-ico suiji"></a>
-                    <a href="#" class="lis ctr-ico">19</a>
+                    <a href="#" class="ctr-ico" :class="ico[icoIdx]" @click.prevent="changeIco"></a>
+                    <a href="#" class="lis ctr-ico">{{this.playlist.length}}</a>
                 </div>
             </div>
             <div class="showList">
@@ -60,44 +60,103 @@
     </div>
 </template>
 <script>
-import { mapState } from 'vuex';
-import { reqSong } from '@/api';
+import { mapState, mapGetters } from 'vuex';
 
 export default {
     name: 'Player',
     data() {
         return {
-            song: '',
-            lenth: 0,
             isPlay: false,
             move: false,
             clickmove: false,
             mouseStartX: 0,
             progressLength: 0,
-            startLeft: 0
+            startLeft: 0,
+            cTime: 0,
+            ico: ['loop', 'suiji', 'one'],
+            icoIdx: 0
+        }
+    },
+    watch: {
+        getSong: {
+            deep: true,
+            handler(newSong) {
+                // console.log('play')
+                this.$refs.audio.src = newSong.url;
+                this.$nextTick(() => { this.prograssPlay(); })
+                this.isPlay = true
+            }
         }
     },
     computed: {
-        ...mapState('player', ['playType'])
+        ...mapState('player', ['playlist', 'currentIndex']),
+        ...mapGetters('player', ['getSong']),
+        getSongInfo() {
+            let name = this.getSong.al.hasOwnProperty('name') ? this.getSong.al.name : '';
+            let picUrl = this.getSong.al.hasOwnProperty('picUrl') ? this.getSong.al.picUrl : '';
+
+            let arName = this.getSong.ar[0] ? this.getSong.ar[0].name : '';
+            return { name, picUrl, arName };
+        },
     },
     methods: {
-        handlePlay() {
-            if (this.isPlay) {
-                this.$refs.audio.pause()
-                this.isPlay = false
-                //移除计时器
-                clearInterval(this.timer)
+        //循环播放
+        loop() {
+            if (this.currentIndex >= this.playlist.length - 1) {
+                this.$store.commit('player/setCurrentIdx', 0);
             } else {
-                this.$refs.audio.play()
-                this.isPlay = true
-                //开启一个计时器，每秒改变进度条
-                this.timer = setInterval(() => {
-                    let newPercent = this.$refs.audio.currentTime * 100 / this.lenth * 1000;
-                    // console.log(newPercent)
-                    this.$refs.proCtl.style.left = newPercent + '%';
-                    this.$refs.proPlay.style.width = newPercent + '%';
-                }, 1000)
+                this.$store.commit('player/setCurrentIdx', this.currentIndex + 1)
             }
+        },
+        //单曲播放
+        one() {
+            //在这里添加loop属性只能在后一次才能生效,而且添加后ended事件就不会被触发
+            // 让播放时间回到0
+            this.$refs.audio.currentTime = 0;
+            this.$refs.audio.play()
+        },
+        //随机播放
+        suiji() {
+            console.log('suiji')
+            console.log(this.playlist.length)
+            if (this.playlist.length > 0) {
+                let random = Math.floor(Math.random() * this.playlist.length);
+                this.$store.commit('player/setCurrentIdx', random);
+                this.$refs.audio.pause();
+                this.isPlay = false
+                this.prograssPlay();
+            }
+        },
+        ended() {
+            let icoFn = this.ico[this.icoIdx]
+            this[icoFn]()
+        },
+        handlePlay() {
+            if (this.getSong.url == null) return;
+            if (this.isPlay) {
+                this.$refs.audio.pause();
+                this.isPlay = false;
+                //移除计时器
+                clearInterval(this.timer);
+            } else {
+                this.prograssPlay();
+            }
+        },
+        prograssPlay() {
+            this.$nextTick(() => { this.$refs.audio.play(); })
+            this.isPlay = true
+            //开启一个计时器，每秒改变进度条
+            this.timer = setInterval(() => {
+                let newPercent = this.$refs.audio.currentTime * 100 / this.getSong.time * 1000;
+                this.$refs.proCtl.style.left = newPercent + '%';
+                this.$refs.proPlay.style.width = newPercent + '%';
+                //当前播放的时间
+                this.cTime = this.$refs.audio.currentTime * 1000;
+                if (newPercent >= 100) {
+                    this.isPlay = false;
+                }
+
+            }, 1000)
         },
         // 滑块点击时
         movebegin() { this.move = true; this.clickmove = true; },
@@ -105,57 +164,67 @@ export default {
         moveover() {
             this.move = false;
             if (this.clickmove) {
-                let newPercent = (this.mouseStartX / this.progressLength) * 100
-                let a = newPercent / 100 * this.lenth / 1000
-                this.$refs.audio.currentTime = a
-                //当还没播放时播放
-                this.handlePlay();
+                if (this.getSong.url == null) return;
+                let newPercent = (this.mouseStartX / this.progressLength) * 100;
+                let a = newPercent / 100 * this.getSong.time / 1000;
+                // console.log(a)
+                this.$refs.audio.currentTime = a;
             }
             this.clickmove = false;
         },
         // 滑块拖拽时
         movestart(e) {
             if (this.move) {
-                this.mouseStartX = e.clientX - this.startLeft
-                this.progressLength = this.$refs.prograss.getBoundingClientRect().width
-                let newPercent = (this.mouseStartX / this.progressLength) * 100
+                this.mouseStartX = e.clientX - this.startLeft;
+                this.progressLength = this.$refs.prograss.clientWidth;
+                let newPercent = (this.mouseStartX / this.progressLength) * 100;
                 if (newPercent <= 100) {
                     this.$refs.proCtl.style.left = newPercent + '%';
                     this.$refs.proPlay.style.width = newPercent + '%';
                 } else {
-                    this.moveover()
+                    this.moveover();
                 }
             }
         },
         //点击进度条
         movedown(e) {
+            //排除特殊情况，当播放路径不存在时 return
+            if (this.getSong.url == null) return;
             //用点击位置减去播放原点位置，就是当前播放条的宽度
-            this.mouseStartX = e.clientX - this.startLeft
+            // console.log('click')
+            this.mouseStartX = e.clientX - this.startLeft;
             //获取总播放条宽度，除以100算出宽度的%单位
-            this.progressLength = this.$refs.prograss.getBoundingClientRect().width
-            let newPercent = (this.mouseStartX / this.progressLength) * 100
+            this.progressLength = this.$refs.prograss.clientWidth;
+            let newPercent = (this.mouseStartX / this.progressLength) * 100;
             if (newPercent <= 100) {
                 this.$refs.proCtl.style.left = newPercent + '%';
                 this.$refs.proPlay.style.width = newPercent + '%';
             } else {
-                this.moveover()
+                this.moveover();
             }
             //总长度*百分长度 * （总时长秒数/总长度）
-            let a = newPercent / 100 * this.lenth / 1000
-            this.$refs.audio.currentTime = a
+            let a = newPercent / 100 * this.getSong.time / 1000;
+            this.$refs.audio.currentTime = a;
 
             //点击进度条并播放
-            this.handlePlay();
+            this.prograssPlay();
+        },
+        changeIco() {
+            if (this.icoIdx >= 2) {
+                this.icoIdx = 0;
+                return;
+            }
+            this.icoIdx += 1;
+
         }
     },
-    async mounted() {
-        let d = await reqSong({ id: '85580', ids: '[85580]', br: '3200000' })
-        console.log(d)
-        this.song = d.data[0].url;
-        this.lenth = d.data[0].time
+    mounted() {
+        //歌曲url不再挂载时请求，通过store actions获取
+        // this.$store.dispatch('player/getSong');
 
         //获取当前播放控件的原点位置，在播放器拖动时不会改变
-        this.startLeft = this.$refs.proCtl.getBoundingClientRect().left
+        this.startLeft = this.$refs.proCtl.getBoundingClientRect().left;
+
     }
 }
 </script>

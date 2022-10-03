@@ -37,3 +37,6 @@ export const reqPlayListDetail = (params) => requests.get('/api/playlist/detail'
 
 ///api/song/enhance/player/url
 export const reqSong = (params) => requests.get('/get/song/enhance/player/url', { method: 'post', params })
+
+//歌曲详情
+export const reqSongDetail = (params) => requests.get('/api/song/detail', { method: 'post', params })
