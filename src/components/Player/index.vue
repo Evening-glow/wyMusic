@@ -44,15 +44,18 @@
                 <div class="ctr-fl">
                     <a href="#" class="ctr-ico vs"></a>
                     <a href="#" class="ctr-ico" :class="ico[icoIdx]" @click.prevent="changeIco"></a>
-                    <a href="#" class="lis ctr-ico">{{this.playlist.length}}</a>
+                    <a href="#" class="lis ctr-ico" @click.prevent="isShowList=!isShowList">{{playlist.length}}</a>
                 </div>
             </div>
-            <div class="showList">
-                <div class="listHd"></div>
+            <div class="showList" :style="{display:isShowList?'block':'none'}">
+                <div class="listHd">播放列表({{playlist.length}})</div>
                 <ul>
-                    <li>
-                        <div class="lf"></div>
-                        <div class="rt"></div>
+                    <li v-for="song,i in playlist">
+                        <div class="lf"><i class="playing"></i>{{song.al.name}}</div>
+                        <div class="rt">
+                            <span style="margin-right:5px;">{{song.ar[0].name}}</span>
+                            <span>{{song.time | duration}}</span>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -74,7 +77,8 @@ export default {
             startLeft: 0,
             cTime: 0,
             ico: ['loop', 'suiji', 'one'],
-            icoIdx: 0
+            icoIdx: 0,
+            isShowList: false
         }
     },
     watch: {
@@ -508,6 +512,37 @@ export default {
                     color: #666;
                     text-shadow: 0 1px 0 #080707;
                     line-height: 27px;
+                }
+            }
+        }
+
+        .showList {
+            display: none;
+            position: absolute;
+            bottom: 44px;
+            right: 5%;
+            width: 400px;
+            height: 200px;
+            background: linear-gradient(45deg, #333, #222);
+            border-radius: 5px;
+            padding: 10px;
+
+            .listHd {
+                width: 100%;
+                height: 20px;
+                color: #ccc;
+                font-size: 16px;
+            }
+
+            ul {
+                width: 100%;
+
+                li {
+                    display: flex;
+                    justify-content: space-between;
+                    color: #fff;
+                    font-size: 14px;
+                    margin: 5px;
                 }
             }
         }
