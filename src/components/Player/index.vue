@@ -50,11 +50,13 @@
             <div class="showList" :style="{display:isShowList?'block':'none'}">
                 <div class="listHd">播放列表({{playlist.length}})</div>
                 <ul>
-                    <li v-for="song,i in playlist">
+                    <li v-for="song,i in playlist" :class="i===currentIndex?'active':''" :key="song.id"
+                        @click="changePlaySong(i)">
                         <div class="lf"><i class="playing"></i>{{song.al.name}}</div>
                         <div class="rt">
                             <span style="margin-right:5px;">{{song.ar[0].name}}</span>
                             <span>{{song.time | duration}}</span>
+                            <span class="delSong" @click="delSong(i)"></span>
                         </div>
                     </li>
                 </ul>
@@ -83,9 +85,31 @@ export default {
     },
     watch: {
         getSong: {
-            deep: true,
+            // deep: true,
             handler(newSong) {
-                // console.log('play')
+                //当有计时器时，删除计时器
+                if (this.timer) {
+                    clearInterval(this.timer)
+                }
+                //当删除的是正在播放的歌曲，并且是最后一首时，判断新获取的song有无url和还有没有可播放的歌曲，根据播放类型决定下一首
+                if (newSong.url == null && this.playlist.length > 0) {
+                    switch (this.ico[this.icoIdx]) {
+                        case this.ico[0]:
+                            this.$store.commit('player/setCurrentIdx', 0);
+                        case this.ico[1]:
+                            let random = Math.floor(Math.random() * this.playlist.length);
+                            this.$store.commit('player/setCurrentIdx', random);
+                        case this.ico[2]:
+                            this.$store.commit('player/setCurrentIdx', 0);
+                        default: return;
+                    }
+                }
+                //判断当前有无可播放判断有无可播放 :1、当删除列表项最后一项时，不播放音乐 2、当前playlist获取不到歌曲时
+                if (this.playlist.length == 0) {
+                    this.isPlay = false;
+                    return;
+                }
+
                 this.$refs.audio.src = newSong.url;
                 this.$nextTick(() => { this.prograssPlay(); })
                 this.isPlay = true
@@ -121,8 +145,6 @@ export default {
         },
         //随机播放
         suiji() {
-            console.log('suiji')
-            console.log(this.playlist.length)
             if (this.playlist.length > 0) {
                 let random = Math.floor(Math.random() * this.playlist.length);
                 this.$store.commit('player/setCurrentIdx', random);
@@ -131,12 +153,13 @@ export default {
                 this.prograssPlay();
             }
         },
+        //播放完毕后，播放下一首
         ended() {
             let icoFn = this.ico[this.icoIdx]
             this[icoFn]()
         },
         handlePlay() {
-            if (this.getSong.url == null) return;
+            if (this.getSong.url == null) { alert('暂无歌曲可播放'); return }
             if (this.isPlay) {
                 this.$refs.audio.pause();
                 this.isPlay = false;
@@ -147,6 +170,9 @@ export default {
             }
         },
         prograssPlay() {
+            if (this.timer) {
+                clearInterval(this.timer)
+            }
             this.$nextTick(() => { this.$refs.audio.play(); })
             this.isPlay = true
             //开启一个计时器，每秒改变进度条
@@ -168,10 +194,11 @@ export default {
         moveover() {
             this.move = false;
             if (this.clickmove) {
-                if (this.getSong.url == null) return;
                 let newPercent = (this.mouseStartX / this.progressLength) * 100;
                 let a = newPercent / 100 * this.getSong.time / 1000;
-                // console.log(a)
+
+                //滑块松开后判断是否有可播放的歌曲
+                if (this.getSong.url == null) return;
                 this.$refs.audio.currentTime = a;
             }
             this.clickmove = false;
@@ -192,10 +219,8 @@ export default {
         },
         //点击进度条
         movedown(e) {
-            //排除特殊情况，当播放路径不存在时 return
-            if (this.getSong.url == null) return;
+
             //用点击位置减去播放原点位置，就是当前播放条的宽度
-            // console.log('click')
             this.mouseStartX = e.clientX - this.startLeft;
             //获取总播放条宽度，除以100算出宽度的%单位
             this.progressLength = this.$refs.prograss.clientWidth;
@@ -206,10 +231,12 @@ export default {
             } else {
                 this.moveover();
             }
+
+            //排除特殊情况，当播放路径不存在时 return
+            if (this.getSong.url == null) { return }
             //总长度*百分长度 * （总时长秒数/总长度）
             let a = newPercent / 100 * this.getSong.time / 1000;
             this.$refs.audio.currentTime = a;
-
             //点击进度条并播放
             this.prograssPlay();
         },
@@ -220,6 +247,18 @@ export default {
             }
             this.icoIdx += 1;
 
+        },
+        //播放列表删除歌曲
+        delSong(index) {
+            this.$store.dispatch('player/delSong', index);
+            //属于中断播放，不会触发ended事件 下一首调用对应的播放
+            // this.ended();
+
+        },
+        //点击列表项播放
+        changePlaySong(idx) {
+            this.$store.commit('player/setCurrentIdx', idx);
+
         }
     },
     mounted() {
@@ -229,6 +268,9 @@ export default {
         //获取当前播放控件的原点位置，在播放器拖动时不会改变
         this.startLeft = this.$refs.proCtl.getBoundingClientRect().left;
 
+    },
+    beforeDestroy() {
+        clearInterval(this.timer);
     }
 }
 </script>
@@ -536,13 +578,37 @@ export default {
 
             ul {
                 width: 100%;
+                height: 180px;
+                overflow-y: scroll;
 
                 li {
                     display: flex;
                     justify-content: space-between;
                     color: #fff;
                     font-size: 14px;
-                    margin: 5px;
+                    padding: 5px;
+
+                    &.active {
+                        background-color: #000;
+                    }
+
+                    &:hover {
+                        background-color: #333;
+                    }
+
+                    .delSong {
+                        display: inline-block;
+                        width: 13px;
+                        height: 13px;
+                        margin-left: 15px;
+                        background-image: url(./images/playlist.png);
+                        background-position: -51px 0;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-position-y: -20px;
+                        }
+                    }
                 }
             }
         }
