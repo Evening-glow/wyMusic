@@ -22,15 +22,18 @@
             <!-- 轮播图 -->
             <div class="banner">
                 <div class="filter"></div>
-                <div class="swiper">
+                <div class="my-swiper swiper-container" ref="swiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide"><img src="./images/swiper1.jpg" alt=""></div>
+                        <div class="swiper-slide" v-for="b,i in banner" :key="b.targetId">
+                            <img :src="b.imageUrl" alt="">
+                        </div>
                     </div>
-                    <div class="swiper-button-prev"></div>
-                    <!--左箭头。如果放置在swiper外面，需要自定义样式。-->
-                    <div class="swiper-button-next"></div>
-                    <!--右箭头。如果放置在swiper外面，需要自定义样式。-->
+                    <div class="swiper-pagination"></div>
                 </div>
+                <div class="my-prev swiper-button-prev"></div>
+                <!--左箭头。如果放置在swiper外面，需要自定义样式。-->
+                <div class="my-next swiper-button-next"></div>
+                <!--右箭头。如果放置在swiper外面，需要自定义样式。-->
                 <div class="download">
                     <div class="loadImg">
                         <div class="activeBtn"></div>
@@ -84,12 +87,11 @@
                             </div>
                             <p class="more">更多<span>-></span></p>
                         </div>
-                        <div class="swiper">
+                        <div class="video-swiper" ref="videoSwiper">
                             <div class="swiper-wrapper">
-                                <div class="swiper-slide">
-                                    <!-- {{$data.albumlist[0]}} -->
+                                <div class="swiper-slide" v-for="alblist,i in albumlist">
                                     <ul class="swiper-item">
-                                        <li v-for="(album,i) in albumlist[0]" :key="i">
+                                        <li v-for="(album,i) in alblist" :key="i">
                                             <div class="v-cover">
                                                 <img :src="album.picUrl" alt="">
                                                 <a href="#" class="mask"></a>
@@ -103,9 +105,9 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="swiper-button-prev"></div>
-                            <div class="swiper-button-next"></div>
                         </div>
+                        <div class="video-prev swiper-button-prev"></div>
+                        <div class="video-next swiper-button-next"></div>
                     </div>
                     <!-- 榜单 -->
                     <div class="list">
@@ -156,14 +158,16 @@
     </div>
 </template>
 <script>
-import { reqRecommendPlayList, reqAlbumList, reqListDetail } from '@/api/index'
+import Swiper from 'swiper';
+import { reqRecommendPlayList, reqAlbumList, reqListDetail, reqBanner } from '@/api/index'
 export default {
     name: 'Home',
     data() {
         return {
             playlist: [],
             albumlist: [],
-            list: []
+            list: [],
+            banner: []
         }
     },
     computed: {
@@ -180,6 +184,44 @@ export default {
         //     return x + 'px';
         // }
     },
+    watch: {
+        albumlist: {
+            immediate: true,
+            handler(n, o) {
+                this.$nextTick(() => {
+                    new Swiper(this.$refs.videoSwiper, {
+                        autoplay: true,
+                        navigation: {
+                            nextEl: '.video-next',
+                            prevEl: '.video-prev',
+                        },
+                        loop: true,
+                        direction: 'horizontal',
+                    });
+                })
+            }
+        },
+        banner: {
+            immediate: true,
+            handler(n, o) {
+                this.$nextTick(() => {
+                    new Swiper(this.$refs.swiper, {
+                        autoplay: true,
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        loop: true,
+                        direction: 'horizontal',
+                    });
+                })
+            }
+        }
+    },
     async mounted() {
         let data = await reqRecommendPlayList();
         this.playlist = data.result;
@@ -188,6 +230,9 @@ export default {
         this.albumlist.push(albumData.weekData.slice(6, 11));
         let listData = await reqListDetail();
         this.list = listData.list.slice(0, 3);
+
+        let bannerData = await reqBanner();
+        this.banner = bannerData.banners;
     }
 }
 </script>
@@ -279,15 +324,27 @@ export default {
         }
 
 
-        .swiper {
+        .my-swiper {
             width: 730px;
             height: 285px;
             z-index: 2;
+            margin: 0;
 
             img {
                 width: 100%;
                 height: 100%;
             }
+        }
+
+        .my-prev {
+            left: 10%;
+            top: 50%;
+        }
+
+        .my-next {
+            position: absolute;
+            right: 10%;
+            top: 50%;
         }
 
         .download {
@@ -491,6 +548,8 @@ export default {
             }
 
             .newVideo {
+                position: relative;
+
                 .hd {
                     width: 729px;
                     height: 35px;
@@ -522,12 +581,13 @@ export default {
                     }
                 }
 
-                .swiper {
+                .video-swiper {
                     width: 729px;
                     margin-top: 20px;
                     margin-bottom: 75px;
                     border: 1px solid #d3d3d3;
                     box-sizing: border-box;
+                    overflow: hidden;
 
                     .swiper-item {
                         background-color: #f5f5f5;
@@ -591,6 +651,22 @@ export default {
                             }
                         }
                     }
+                }
+
+                .video-next {
+                    position: absolute;
+                    right: 0;
+                    top: 50%;
+                    transform: scale(0.8) translateY(-50%);
+                    --swiper-navigation-color: #666;
+                }
+
+                .video-prev {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: scale(0.8) translateY(-50%);
+                    --swiper-navigation-color: #666;
                 }
             }
 

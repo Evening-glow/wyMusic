@@ -40,3 +40,6 @@ export const reqSong = (params) => requests.get('/get/song/enhance/player/url', 
 
 //歌曲详情
 export const reqSongDetail = (params) => requests.get('/api/song/detail', { method: 'post', params })
+
+//获取轮播图
+export const reqBanner = (params = { type: 0 }) => requests.get('/api/banner', { method: 'get', params })
