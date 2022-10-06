@@ -6,6 +6,9 @@ import store from '@/store'
 import { bigNumberTransform } from '@/utils'
 import Pagination from '@/components/Pagination'
 
+//引入swiper样式
+import 'swiper/css/swiper.min.css'
+
 Vue.config.productionTip = false
 
 //时间本土化
