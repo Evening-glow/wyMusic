@@ -43,3 +43,12 @@ export const reqSongDetail = (params) => requests.get('/api/song/detail', { meth
 
 //获取轮播图
 export const reqBanner = (params = { type: 0 }) => requests.get('/api/banner', { method: 'get', params })
+
+//手机登录
+export const loginForPhone = (params) => requests.get('/api/login/cellphone', { method: 'post', params })
+
+//发送验证码
+export const reqVerCode = params => requests.get('/api/captcha/sent', { method: 'post', params })
+
+//验证验证码
+export const reqVerfiy = params => requests.get('/api/captcha/verify', { method: 'post', params })
