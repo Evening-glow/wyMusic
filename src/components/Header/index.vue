@@ -66,7 +66,7 @@
                 </div>
             </div>
             <a href="#" class="creatorCenter">创作者中心</a>
-            <a href="#" class="login">登录</a>
+            <router-link class="login" to="/login">登录</router-link>
         </div>
     </header>
 </template>

@@ -5,6 +5,7 @@ import Home from '@/pages/Home';
 import Search from '@/pages/Search';
 import PlayList from '@/pages/PlayList';
 import RankingList from '@/pages/RankingList';
+import Login from '@/pages/Login';
 
 Vue.use(VueRouter);
 //解决路由相同参数下跳转到当前路由
@@ -43,6 +44,11 @@ export default new VueRouter({
             name: 'search',
             path: '/search',
             component: Search
+        },
+        {
+            name: 'login',
+            path: '/login',
+            component: Login
         },
         {
             path: '*',
