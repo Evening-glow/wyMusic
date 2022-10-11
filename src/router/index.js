@@ -21,7 +21,7 @@ VueRouter.prototype.push = function (location, resolve, reject) {
     }
 }
 
-export default new VueRouter({
+const router = new VueRouter({
     routes: [
         {
             name: 'home',
@@ -55,4 +55,28 @@ export default new VueRouter({
             redirect: '/home'
         }
     ]
-})
+});
+
+//配置路由拦截器
+router.beforeEach((to, from, next) => {
+    console.log('from:', from.name, 'to:', to.name)
+    if (to.name == 'search') {
+        console.log('search')
+        try {
+            let info = JSON.parse(localStorage.getItem('userInfo'));
+            if (info) {
+                next();
+            } else {
+                //未登录跳转到登录页
+                next('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+
+    } else {
+        next();
+    }
+});
+
+export default router;

@@ -18,6 +18,16 @@ export default {
     MyHeader,
     MyFooter,
     Player
+  },
+  //页面挂载时，在本地数据获取登录用户数据
+  mounted() {
+    console.log('app mounted');
+    let info = JSON.parse(localStorage.getItem('userInfo'));
+    console.log(typeof info)
+    if (info) {
+      this.$store.dispatch('login/renewState', info);
+      console.log('end')
+    }
   }
 }
 </script>
