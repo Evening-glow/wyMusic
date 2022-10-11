@@ -18,11 +18,11 @@
             <div class="searchContainer">
                 <span class="searchIcon"></span>
                 <input type="text" placeholder="音乐/视频/电台/用户" v-model.trim="searchParams.keywords"
-                    @keydown.enter="handleEnter">
-                <div class="searchTips" v-if="isShow">
+                    @keydown.enter="handleEnter" @blur="isShow = false;" @focus="isShow=true">
+                <div class="searchTips" v-show="isShow">
                     <p class="t-hd"><a href="#">搜“{{searchParams.keywords}}” 相关用户&gt;</a></p>
                     <div class="info-container">
-                        <div class="itm" v-if="isHave('songs')">
+                        <div class="itm" v-show="isHave('songs')">
                             <div class="itm-lf">
                                 <i></i>
                                 <span>单曲</span>
@@ -32,7 +32,7 @@
                                         href="#">{{song.name}}-{{song.artists[0].name}}</a></li>
                             </ul>
                         </div>
-                        <div class="itm" v-if="isHave('artists')">
+                        <div class="itm" v-show="isHave('artists')">
                             <div class="itm-lf">
                                 <i class="icn-singer"></i>
                                 <span>歌手</span>
@@ -42,7 +42,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="itm" v-if="isHave('albums')">
+                        <div class="itm" v-show="isHave('albums')">
                             <div class="itm-lf">
                                 <i class="icn-video"></i>
                                 <span>专辑</span>
@@ -53,7 +53,7 @@
                                         href="#">{{album.name}}-{{album.artist.name}}</a></li>
                             </ul>
                         </div>
-                        <div class="itm" v-if="isHave('playlists')">
+                        <div class="itm" v-show="isHave('playlists')">
                             <div class="itm-lf">
                                 <i class="icn-sheet"></i>
                                 <span>歌单</span>

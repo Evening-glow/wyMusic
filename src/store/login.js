@@ -19,10 +19,11 @@ const mutations = {
 }
 const getters = {
     isLogin(state) {
-        return state.userInfo.token ? true : false;
+        return Object.hasOwn(state.userInfo, 'token') ? true : false;
     }
 }
 export default {
+    namespaced: true,
     state,
     actions,
     mutations,

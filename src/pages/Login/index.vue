@@ -1,6 +1,6 @@
 <template>
     <div class="loginContainer">
-        <form @submit="toLogin">
+        <form @submit.prevent="toLogin">
             <p>
                 <label for="tel">
                     电话号码：
