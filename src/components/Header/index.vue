@@ -108,7 +108,7 @@ export default {
             this.isShow = false;
         },
         isHave(string) {
-            if (Object.hasOwn(this.guess, 'order')) {
+            if (Object.hasOwnPropert(this.guess, 'order')) {
                 return this.guess.order.indexOf(string) >= 0;
             } else {
                 return false
