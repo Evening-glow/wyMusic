@@ -17,7 +17,6 @@ moment.locale('zh-cn')
 //全局过滤器
 Vue.filter('toBeThousand', bigNumberTransform)
 
-moment.locale('zh-cn')
 Vue.filter('timer', function (time) {
   return moment(time).calendar()
 });
