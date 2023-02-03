@@ -12,11 +12,12 @@
                     <li><a href="#">关注</a></li>
                     <li><a href="#">商城</a></li>
                     <li><a href="#">音乐人</a></li>
-                    <li class="h-smallIcon"><a href="#">下载客户端</a><i class="hot"></i></li>
+                    <li class="h-smallIcon"><a href="#">下载客户端</a><i class="hot"
+                            :style="{backgroundImage:`url(${img1})`}"></i></li>
                 </ul>
             </div>
             <div class="searchContainer">
-                <span class="searchIcon"></span>
+                <span class="searchIcon" :style="{backgroundImage:`url(${img1})`}"></span>
                 <input type="text" placeholder="音乐/视频/电台/用户" v-model.trim="searchParams.keywords"
                     @keydown.enter="handleEnter" @blur="isShow = false;" @focus="isShow=true">
                 <div class="searchTips" v-show="isShow">
@@ -24,7 +25,7 @@
                     <div class="info-container">
                         <div class="itm" v-show="isHave('songs')">
                             <div class="itm-lf">
-                                <i></i>
+                                <i :style="{backgroundImage:`url(${img2})`}"></i>
                                 <span>单曲</span>
                             </div>
                             <ul class="itm-rt">
@@ -83,7 +84,9 @@ export default {
                 keywords: ''
             },
             guess: {},
-            isShow: false
+            isShow: false,
+            img1: require('./images/topbar.png'),
+            img2: require('./images/icon.png')
         }
     },
     watch: {
@@ -108,7 +111,7 @@ export default {
             this.isShow = false;
         },
         isHave(string) {
-            if (Object.hasOwnProperty(this.guess, 'order')) {
+            if (JSON.stringify(this.guess) !== '{}') {
                 return this.guess.order.indexOf(string) >= 0;
             } else {
                 return false
@@ -172,7 +175,6 @@ header {
                             top: 15px;
                             width: 38px;
                             height: 19px;
-                            background-image: url(./images/topbar.png);
                             background-position: 295px 0;
                         }
                     }
@@ -208,7 +210,6 @@ header {
                 display: block;
                 width: 20px;
                 height: 20px;
-                background-image: url(./images/topbar.png);
                 background-position: -6px 112px;
             }
 
@@ -271,7 +272,6 @@ header {
                                 width: 14px;
                                 height: 15px;
                                 background-position: -35px -300px;
-                                background-image: url(./images/icon.png);
                             }
 
                             .icn-singer {

@@ -26,32 +26,38 @@
                 <ul>
                     <li>
                         <a href="#">
-                            <span class="enterImg" style='--x:50px;--y:95;'></span>
-                            <span class="enterText special" style="--y:33px;"></span>
+                            <span class="enterImg" :style="{backgroundImage:`url(${img1})`}"
+                                style="--x:50px;--y:95;"></span>
+                            <span class="enterText special" :style="{backgroundImage:`url(${img2})`}"
+                                style="--y:33px;"></span>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="enterImg" style='--x:50px;--y:451px;'></span>
-                            <span class="enterText" style="--y:-87px"></span>
+                            <span class="enterImg" :style="{backgroundImage:`url(${img1})`}"
+                                style="--x:50px;--y:451px;"></span>
+                            <span class="enterText" :style="{backgroundImage:`url(${img2})`}" style="--y:-87px"></span>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="enterImg" style='--x:0;--y:0px;'></span>
-                            <span class="enterText" style="--y:4px"></span>
+                            <span class="enterImg" :style="{backgroundImage:`url(${img1})`}"
+                                style='--x:0;--y:0px;'></span>
+                            <span class="enterText" :style="{backgroundImage:`url(${img2})`}" style="--y:4px"></span>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="enterImg" style='--x:50px;--y:502px;'></span>
-                            <span class="enterText" style="--y:-51px"></span>
+                            <span class="enterImg" :style="{backgroundImage:`url(${img1})`}"
+                                style='--x:50px;--y:502px;'></span>
+                            <span class="enterText" :style="{backgroundImage:`url(${img2})`}" style="--y:-51px"></span>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="enterImg" style='--x:0;--y:451px;'></span>
-                            <span class="enterText" style="--y:-68px"></span>
+                            <span class="enterImg" :style="{backgroundImage:`url(${img1})`}"
+                                style='--x:0;--y:451px;'></span>
+                            <span class="enterText" :style="{backgroundImage:`url(${img2})`}" style="--y:-68px"></span>
                         </a>
                     </li>
                 </ul>
@@ -62,6 +68,12 @@
 <script>
 export default {
     name: 'MyFooter',
+    data() {
+        return {
+            img1: require('./images/foot_enter_new.png'),
+            img2: require('./images/foot_enter_tt.png')
+        }
+    }
 }
 </script>
 <style lang="less" scoped>
@@ -146,7 +158,6 @@ footer {
                     .enterImg {
                         width: 50px;
                         height: 45px;
-                        background-image: url(./images/foot_enter_new.png);
                         background-size: 110px 552px;
                         background-position: var(--x) var(--y);
                         // background-position: 50px 150px;
@@ -155,7 +166,6 @@ footer {
                     .enterText {
                         width: 72px;
                         height: 14px;
-                        background-image: url(./images/foot_enter_tt.png);
                         background-size: 180px 139px;
                         // background-position: 0px 0px;
                         background-position: 0px var(--y);

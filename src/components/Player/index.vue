@@ -3,7 +3,7 @@
     <div class="playerCtn">
         <audio :src="getSong.url ? getSong.url : '' " ref="audio" @ended="ended" preload="auto"></audio>
         <div class="showCtl">
-            <a href="#"><i></i></a>
+            <a href="#" :style="{backgroundImage:`url(${img1})`}"><i :style="{backgroundImage:`url(${img1})`}"></i></a>
             <div class="ct"></div>
         </div>
         <div class="player">
@@ -66,11 +66,12 @@
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
-
+import imgObj from './images'
 export default {
     name: 'Player',
     data() {
         return {
+            ...imgObj,
             isPlay: false,
             move: false,
             clickmove: false,
@@ -298,13 +299,11 @@ export default {
             justify-content: center;
             width: 52px;
             height: 67px;
-            background-image: url(./images/playbar.png);
             background-position: 0 -380px;
 
             i {
                 width: 18px;
                 height: 18px;
-                background-image: url(./images/playbar.png);
                 background-position: -100px -380px;
             }
         }
