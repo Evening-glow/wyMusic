@@ -59,7 +59,6 @@ const router = new VueRouter({
 
 //配置路由拦截器
 router.beforeEach((to, from, next) => {
-    console.log('from:', from.name, 'to:', to.name)
     if (to.name == 'search') {
         console.log('search')
         try {

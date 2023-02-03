@@ -1,6 +1,10 @@
 const { defineConfig } = require('@vue/cli-service')
+var webpack = require('webpack');
+var vue = require('vue-loader');
+var path = require('path');
 
 module.exports = defineConfig({
+  publicPath: './',
   transpileDependencies: true,
   lintOnSave: false,
   devServer: {
@@ -17,6 +21,7 @@ module.exports = defineConfig({
     proxy: {
       "/api": {
         target: 'http://localhost:3000',
+        // target: 'https://autumnfish.cn/',
         changeOrigin: true,
         pathRewrite: { "^/api": "" }//路径重写
       },
@@ -26,5 +31,6 @@ module.exports = defineConfig({
         pathRewrite: { "^/get": "" }
       }
     }
-  }
+  },
+  assetsDir: "static"
 })
