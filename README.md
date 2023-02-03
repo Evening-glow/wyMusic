@@ -14,14 +14,7 @@ npm run serve
 ```
 npm run build
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### [在线预览](https://evening-glow.github.io/wyMusic-watch/#/home)
 
 ### 运行server服务器
 本项目依赖NeteaseCloudMusicApi 搭建服务获取网易云资源，请 https://github.com/Binaryify/NeteaseCloudMusicApi 前往下载
